@@ -60,7 +60,7 @@ main {
     justify-content: space-evenly;
     flex-wrap: wrap;
 }
-.imgEvents {
+.image{
     height: 50%;
     border-radius: 5px;
 }

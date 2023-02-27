@@ -63,55 +63,44 @@
       </div>
     </header>
     <main class="events">
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/cinema.jpg" alt="cinema">
-        <div class="card-body">
-          <h5 class="card-title">Cinema</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
+      <div class="py-4 bg-section-2 d-flex justify-content-between align-items-center">
+        <div class="mx-4" id="category">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category1" value="Food Fair" checked>
+                <label class="form-check-label" for="category1">Category</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category2" value="Museum">
+                <label class="form-check-label" for="category2">Category</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category3" value="Costume Party">
+                <label class="form-check-label" for="category3">Category</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category4" value="Music Concert">
+                <label class="form-check-label" for="category4">Category</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category5" value="Book Exchange">
+                <label class="form-check-label" for="category5">Category</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="category6" value="Cinema">
+                <label class="form-check-label" for="category5">Category</label>
+            </div>
         </div>
-      </div>
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/costume_party.jpg" alt="party">
-        <div class="card-body">
-          <h5 class="card-title"> Costume Party</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
+        <div class="mx-">
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search">
+                <button class="btn-a" type="submit">Search</button>
+            </form>
         </div>
+    </div>
+    <div class="cards">
+      <div id="insertCards" class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
       </div>
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/food_fair.jpg" alt="food_fair">
-        <div class="card-body">
-          <h5 class="card-title">Food Fair</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
-        </div>
-      </div>
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/marathon.jpg" alt="marathon">
-        <div class="card-body">
-          <h5 class="card-title">Marathon</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
-        </div>
-      </div>
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/museum_tour.jpg" alt="museum">
-        <div class="card-body">
-          <h5 class="card-title">Museum Tour</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
-        </div>
-      </div>
-      <div class="card" style="width: 18rem;">
-        <img class="imgEvents" src="./Assets/music_concert.jpg" alt="concert">
-        <div class="card-body">
-          <h5 class="card-title">Music Concert</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="./details.html" class="btn btn-secondary">Go somewhere</a>
-        </div>
-      </div>
-
+    </div>
     </main>
 
     <footer>
@@ -131,7 +120,8 @@
         <h4>Cohort</h4>
       </div>
     </footer>
-  
+    <script src="./Scripts/data.js"></script>
+    <script src="./Scripts/index.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
