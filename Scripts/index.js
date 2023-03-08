@@ -122,10 +122,6 @@ function updateResults() {
     });
     card.innerHTML = cardsDelEvento.join('');
   } else {
-    swal("No matches found");
-    searchInput.value = ''; 
-    setTimeout(() => {      
-      location.reload(); 
-    }, 2000); 
+    
 }
 }

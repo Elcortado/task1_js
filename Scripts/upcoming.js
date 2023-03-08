@@ -55,33 +55,26 @@ function printcategoria() {
 
 printcategoria();
 
-// obtener los checkboxes
 let checkboxes = document.querySelectorAll('input[type=checkbox]');
 
-// obtener el elemento de entrada de búsqueda
 let searchInput = document.querySelector('input[type=search]');
 
-// obtener el elemento de contenedor de resultados de búsqueda
 let cardf = document.getElementById('insertCards');
 
-// agregar eventListeners a los checkboxes y al elemento de entrada de búsqueda
 checkboxes.forEach((checkbox) => {
   checkbox.addEventListener('change', updateResults);
 });
 
 searchInput.addEventListener('input', updateResults);
 
-// función para actualizar los resultados de búsqueda en la página
 function updateResults() {
-  // obtener las categorías seleccionadas
+  
   let checkedCategories = Array.from(checkboxes)
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
 
-  // obtener el término de búsqueda
-  let searchTerm = searchInput.value.toLowerCase();
+    let searchTerm = searchInput.value.toLowerCase();
 
-  // filtrar los eventos por categoría y término de búsqueda
   let filteredEvents = eventos.filter((event) => {
     return (
       event.name.toLowerCase().includes(searchTerm) &&
@@ -89,10 +82,9 @@ function updateResults() {
     );
   });
 
-  // crear el HTML de los eventos filtrados y actualizar el contenido en la página
   if (filteredEvents.length > 0) {
     let cardsDelEvento = filteredEvents.map((datos) => {
-      // código para crear el HTML de los eventos
+      
       return `<div class="card m-2 text-center" style="width:18rem">
       <img src="${datos.image}" class="fotos card-img-top" style="height:150px" alt="${datos.name}">
       <div class="card-body d-flex flex-column align-items-center text-center">
@@ -101,16 +93,12 @@ function updateResults() {
       </div>
       <div class="card-footer d-flex flex-column align-items-center">
           <small class="text-muted">${datos.price}</small>
-          <a href="./details.html?_id=${datos._id}" class="boton btn btn-danger">Details</a>
+          <a href="./details.html?_id=${datos._id}" class="btn btn-outline-secondary">Details</a>
       </div>
   </div>`
 });
     cardf.innerHTML = cardsDelEvento.join('');
   } else {
-    swal("No matches found", "", "warning");
-    searchInput.value = '';
-    setTimeout(() => {      
-      location.reload();
-    }, 2000);
+    
   }
 }

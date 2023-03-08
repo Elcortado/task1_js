@@ -3,14 +3,14 @@ let eventos = data.events;
 let card = (imagen, nombre, descripcion, precio, id) => {
     return `
         <div class="card m-2 text-center" style="width:18rem">
-            <img src="${imagen}" class="fotos card-img-top" style="height:150px" alt="${nombre}">
-            <div class="card-body d-flex flex-column align-items-center text-center">
-                <h5 class="card-title">${nombre}</h5>
-                <p class="card-text">${descripcion}</p>
-            </div>
-            <div class="card-footer d-flex flex-column align-items-center">
-                <small class="text-muted">Price: $${precio}</small>
-                <a href="./details.html?_id=${id}" class="btn btn-outline-secondary">Details</a>
+        <img src="${imagen}" class="fotos card-img-top" style="height:150px" alt="${nombre}">
+        <div class="card-body d-flex flex-column align-items-center text-center">
+            <h5 class="card-title">${nombre}</h5>
+            <p class="card-text">${descripcion}</p>
+        </div>
+        <div class="card-footer d-flex flex-column align-items-center">
+            <small class="text-muted">Price $${precio}</small>
+            <a href="./details.html?_id=${id}" class="btn btn-outline-secondary">Details</a>
             </div>
         </div>
     `;
@@ -100,10 +100,6 @@ function updateResults() {
   ;});
     cardf.innerHTML = cardsDelEvento.join('');
   } else {
-    swal("No matches found");
-    searchInput.value = '';
-    setTimeout(() => {      
-      location.reload();
-    }, 2000);
+    
   }
 }
