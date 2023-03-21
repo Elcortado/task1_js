@@ -1,104 +1,103 @@
-let eventos = data.events;
+const eventsCards = document.getElementById("cartas");
+const checkbox = document.getElementById("chbox");
+const $search = document.getElementById("search")
+const fragment = document.createDocumentFragment();
 
-let card = (imagen, nombre, descripcion, precio, id) => {
-    return `
-        <div class="card m-2 text-center" style="width:18rem">
-        <img src="${imagen}" class="fotos card-img-top" style="height:150px" alt="${nombre}">
-        <div class="card-body d-flex flex-column align-items-center text-center">
-            <h5 class="card-title">${nombre}</h5>
-            <p class="card-text">${descripcion}</p>
-        </div>
-        <div class="card-footer d-flex flex-column align-items-center">
-            <small class="text-muted">Price $${precio}</small>
-            <a href="./details.html?_id=${id}" class="btn btn-outline-secondary">Details</a>
-            </div>
-        </div>
-    `;
-}
-
-let currentDate;
-function printUpcomingEvents() {
-    currentDate = data.currentDate
-    let cardsDelEvento = []
-    
-    for (let datos of eventos) {
-        if(datos.date>currentDate){
-        cardsDelEvento.push(card(datos.image, datos.name, datos.description, datos.price, datos._id));
-        }
+async function getData() {
+    try {
+        let apiUrl = 'https://mindhub-xj03.onrender.com/api/amazing'
+        let response = await fetch(apiUrl);
+        data = await response.json();
+        createCategory(data)
+        Carta(data.events, eventsCards);
+        createChbox(Categories, checkbox);
     }
-        
-    let futuro = document.getElementById('insertCards');
-    futuro.innerHTML = cardsDelEvento.join(' ');
+    catch (error) {
+        console.log(error);
+    }
 }
+getData()
 
-printUpcomingEvents();
+let data=""
+let Categories=""
 
-let categorias = [];
-
-eventos.forEach((each) => {
-  if (!categorias.includes(each.category)) {
-    categorias.push(each.category);
+function Carta(array, container) {
+  container.innerHTML = ""
+  for (let card of array) {
+      let div = document.createElement("div")
+      div.className = "card col-10 col-sm-3"
+      div.innerHTML += `
+     <img src="${card.image}" class="fotos card-img-top" style="height:150px" alt="${card.name}">
+   <div class="card-body d-flex flex-column align-items-center text-center">
+       <h5 class="card-title">${card.name}</h5>
+       <p class="card-text">${card.description}</p>
+   </div>
+   <div class="card-footer d-flex flex-column align-items-center">
+       <small class="text-muted">Price $${card.price}</small>
+       <a href="./details.html" class="btn btn-outline-secondary">Details</a>
+   </div>
+</div>`
+      fragment.appendChild(div);
   }
-});
+  container.appendChild(fragment);
+}
+function filtrarEventosPorFecha(eventos, fecha) {
+  let fechaActual = new Date(fecha);
+  let eventosFiltrados = eventos.filter(evento => {
+    let fechaEvento = new Date(evento.date);
+    return fechaEvento > fechaActual;
+  })
+  return eventosFiltrados;
+};
 
-function printcategoria() {
-  let categ = document.querySelector('#categoryCheck');
-  categ.innerHTML = categorias.map((category) => {
-    return `
-      <div class="form-check form-check-inline">
-      <input class="form-check-input" type="checkbox" id="${category}" value="${category}">
-      <label class="form-check-label" for="${category}">${category}</label>
-      </div>
-    `;
-  }).join('');
+const createCategory = (array) => {
+    let categories = array.events.map(category => category.category)
+    Categories = categories.reduce((cosa, otraCosa) => {
+        if (!cosa.includes(otraCosa)) {
+            cosa.push(otraCosa);
+        }
+        return cosa
+    }, [])
+    return Categories
 }
 
-printcategoria();
-
-let checkboxes = document.querySelectorAll('input[type=checkbox]');
-
-let searchInput = document.querySelector('input[type=search]');
-
-let cardf = document.getElementById('insertCards');
-
-checkboxes.forEach((checkbox) => {
-  checkbox.addEventListener('change', updateResults);
-});
-
-searchInput.addEventListener('input', updateResults);
-
-function updateResults() {
-  
-  let checkedCategories = Array.from(checkboxes)
-    .filter((checkbox) => checkbox.checked)
-    .map((checkbox) => checkbox.value);
-
-    let searchTerm = searchInput.value.toLowerCase();
-
-  let filteredEvents = eventos.filter((event) => {
-    return (
-      event.name.toLowerCase().includes(searchTerm) &&
-      (checkedCategories.length === 0 || checkedCategories.includes(event.category))&& event.date>currentDate
-    );
-  });
-
-  if (filteredEvents.length > 0) {
-    let cardsDelEvento = filteredEvents.map((datos) => {
-      
-      return `<div class="card m-2 text-center" style="width:18rem">
-      <img src="${datos.image}" class="fotos card-img-top" style="height:150px" alt="${datos.name}">
-      <div class="card-body d-flex flex-column align-items-center text-center">
-          <h5 class="card-title">${datos.name}</h5>
-          <p class="card-text">${datos.description}</p>
-      </div>
-      <div class="card-footer d-flex flex-column align-items-center">
-          <small class="text-muted">${datos.price}</small>
-          <a href="./details.html?_id=${datos._id}" class="btn btn-outline-secondary">Details</a>
-      </div>
-  </div>`
-});
-    cardf.innerHTML = cardsDelEvento.join('');
-  } else {
-    
-  }
+const createChbox = (categories, checkbox) => {
+    categories.forEach(category => {
+        let div = document.createElement('div')
+        div.className = `form-check mt-3`
+        div.innerHTML = `
+        <input type="checkbox" id="${category}" name="categories" class="form-check-input" value="${category}">
+        <label for="${category}" class="form-check-label me-1">${category}</label>
+        `
+        checkbox.appendChild(div)
+    });
 }
+
+
+const FiltSearch = (array, value) => {
+    let filtrsearch = array.filter(buscador => buscador.name.toLowerCase().includes(value.toLowerCase().trim()))
+    return filtrsearch
+}
+
+const FiltCheck = (array,) => {
+    const checkedCategories = Array.from(checkbox.querySelectorAll('input[type="checkbox"]:checked')).map((el) => el.value);
+    if (checkedCategories.length === 0) {
+        return array;
+    } else {
+        let filtrado = array.filter(check => checkedCategories.includes(check.category));
+        return filtrado;
+    }
+}
+
+
+
+$search.addEventListener('keyup', (e) =>{
+    let datereando = FiltSearch(data.events, e.target.value)
+    Carta(datereando, eventsCards)
+})
+
+
+checkbox.addEventListener('change', () => {
+    let nuevofiltrado = FiltCheck(data.events);
+    Carta(nuevofiltrado, eventsCards)
+})

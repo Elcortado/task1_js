@@ -1,3 +1,28 @@
+const eventsCards = document.getElementById("cartas");
+const checkbox = document.getElementById("chbox");
+const $search = document.getElementById("search")
+const fragment = document.createDocumentFragment();
+
+async function getData() {
+    try {
+        let apiUrl = 'https://mindhub-xj03.onrender.com/api/amazing'
+        let response = await fetch(apiUrl);
+        data = await response.json();
+        createCategory(data)
+        Carta(data.events, eventsCards);
+        createChbox(Categories, checkbox);
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+getData()
+
+
+
+
+
+
 let eventos = data.events;
 
 let card = (imagen, nombre, descripcion, precio, id) => {
@@ -27,7 +52,7 @@ function printPastEvents() {
         }
     }    
     
-    let pasado = document.getElementById('insertCards');
+    let pasado = document.getElementById('cartas');
     pasado.innerHTML = cardsDelEvento.join(' ');
 }
 
@@ -43,7 +68,7 @@ eventos.forEach((each) => {
 });
 
 function printcategoria() {
-  let categ = document.querySelector('#categoryCheck');
+  let categ = document.querySelector('#chbox');
   categ.innerHTML = categorias.map((category) => {
     return `
       <div class="form-check form-check-inline">
@@ -60,7 +85,7 @@ let checkboxes = document.querySelectorAll('input[type=checkbox]');
 
 let searchInput = document.querySelector('input[type=search]');
 
-let cardf = document.getElementById('insertCards');
+let cardf = document.getElementById('cartas');
 
 checkboxes.forEach((checkbox) => {
   checkbox.addEventListener('change', updateResults);
