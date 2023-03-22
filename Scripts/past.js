@@ -1,86 +1,110 @@
-async function fetchCards() {
-  try {
-    let urlApi = 'https://mindhub-xj03.onrender.com/api/amazing';
-    let response = await fetch(urlApi).then(res => res.json());
-    let printEvents = (cardId, eventsArray) => {
-      let card = document.getElementById(cardId);
-      let cardsDelEvento = eventsArray
-        .filter(event => event.date < response.currentDate)
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(event => `
-          <div class="card m-2 text-center" style="width:18rem" class="cardDetails">
-            <img src="${event.image}" class="fotos card-img-top" style="height:150px" alt="${event.name}">
-            <div class="card-body d-flex flex-column align-items-center text-center">
-              <h5 class="card-title">${event.name}</h5>
-              <p class="card-text">${event.description}</p>
-            </div>
-            <div class="card-footer d-flex flex-column align-items-center">
-              <small class="text-muted">${event.price}</small>
-              <a href="./details.html?id=${event.id}" class="btn btn-outline-secondary">Details</a>
-            </div>
-          </div>`
-        );
-      card.innerHTML = cardsDelEvento.join('');
-    };
+const $main = document.getElementById('contenedorCartas')
+const url = 'https://mindhub-xj03.onrender.com/api/amazing'
+const $contenedorChecks = document.getElementById('checksID3') 
+const $botonBarraSearch = document.getElementById('botonBuscarTxt2')
 
-    printEvents('cardEventsp', response.events);
+fetch(url).then(respuesta => {
+    return respuesta.json()
+    }).then(dato => {
+      const datosCards = dato.events
+      const currentDateVar = dato.currentDate
 
-  let categorias = [...new Set(response.events.map(evento => evento.category))];
-  categorias = categorias.sort();
-  let checkboxContainer = document.querySelector('#inlineCheckbox');
-  let updateResults = async () => {
-    try {
-      let response = await fetch(urlApi).then(res => res.json());
-      let events = response.events.filter(event => event.date);
-      let checkedCategories = [...checkboxes].filter(checkbox => checkbox.checked).map(checkbox => checkbox.value.toLowerCase());
-      let searchTerm = searchInput.value.toLowerCase();
-      let filteredEvents = events.filter(event => {
-        return (
-          event.name.toLowerCase().includes(searchTerm) &&
-          (checkedCategories.length === 0 || checkedCategories.includes(event.category.toLowerCase())) && event.date < response.currentDate
-        );
-      });
-      if (filteredEvents.length > 0) {
-        printEvents('cardEventsp', filteredEvents);
-      } else {
-        swal("No results... Please try again");
-        searchInput.value = '';
-        setTimeout(() => location.reload(), 2000);
+      const listaEventos = datosCards.filter(evento => evento.category)
+                              .map(evento => evento.category)
+
+      const categoriaFiltrada = Array.from( new Set(listaEventos))
+
+      const checkBoxEventos = categoriaFiltrada.reduce( (acumulador, categoria, indice) => {
+        return acumulador += `<div class="form-check">
+        <input class="form-check-input" type="checkbox" value="${categoria}" id="flexCheck${indice}">
+        <label class="form-check-label" for="flexCheck${indice}">
+          ${categoria}
+        </label>
+      </div>`
+      },'')
+
+      $contenedorChecks.innerHTML += checkBoxEventos
+
+      $contenedorChecks.addEventListener('change', e =>{
+        agregarElementos(filtroCheckBox(eventosFiltrados), $main)
+      })
+      
+      $botonBarraSearch.addEventListener('click', e =>{
+        agregarElementos(filtroTexto(filtroCheckBox(eventosFiltrados)), $main)
+      })
+
+      const  eventosFiltrados = filtrarEventos(datosCards, currentDateVar)
+      agregarElementos(eventosFiltrados, $main)
+      
+    } 
+    )
+
+function filtrarEventos(lista, currentDate){
+  let arregloFiltrado = []
+  for( let elemento of lista ){
+      if(elemento.date < currentDate){
+          arregloFiltrado.push(elemento)
       }
-    } catch (error) {
-      console.error('Error al recuperar los datos de la API:', error);
     }
-  };
+    return arregloFiltrado
+  }
+    
 
-  categorias.forEach(categoria => {
-    let checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = categoria;
-    checkbox.value = categoria;
-    checkbox.classList.add('form-check-input');
-    checkbox.addEventListener('change', updateResults);
-
-    let label = document.createElement('label');
-    label.htmlFor = categoria;
-    label.textContent = categoria;
-    label.classList.add('form-check-label', 'blockquote');
-
-    let div = document.createElement('div');
-    div.classList.add('form-check', 'form-check-inline');
-    div.appendChild(checkbox);
-    div.appendChild(label);
-
-    checkboxContainer.appendChild(div);
-  });
-
-  let checkboxes = document.querySelectorAll('input[type=checkbox]');
-  let searchInput = document.querySelector('input[type=search]');
-
-  checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateResults));
-  searchInput.addEventListener('input', updateResults);
-} catch (error) {
-  console.error('Error al recuperar los datos de la API:', error);
-}
+function agregarElementos(datosCards, card){
+  let template = '';
+  if(datosCards.length === 0){
+    card.innerHTML = NoCoincidenciaMensaje()
+  } else{
+   for(let elemento of datosCards){
+      template += crearElemento(elemento);
+   }
+   card.innerHTML = template;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', fetchCards);
+function crearElemento(evento){
+ return `
+<div class="card p-3 m-3" style="width: 18rem;">
+  <img src="${evento.image}" class="card-img-top" Style="height: 25vh" alt="...">
+  <div class="card-body d-flex justify-content-between flex-column">
+    <h5 class="card-title">${evento.name}</h5>
+    <p class="card-text">${evento.description}</p>
+    <div class="d-flex justify-content-between align-items-center">
+        <p>Price: ${evento.price} $</p>
+        <a href="./details.html?id=${evento._id}" class="btn btn-secondary">Details</a>
+    </div>
+  </div>
+</div>
+    `
+}
+
+function filtroCheckBox(listaEventos){
+  let seleccionadas = []
+  const checkBoxChecked = document.querySelectorAll('input[type="checkbox"]:checked')
+  seleccionadas = Array.from(checkBoxChecked).map( elemento => elemento.value)
+
+  if(seleccionadas.length ===0){
+    return listaEventos;
+  } else {
+    return listaEventos.filter( event =>
+      seleccionadas.includes(event.category))
+  }
+}
+
+function filtroTexto(filtroCheckBox){
+  const textoEscrito = document.getElementById('textSearch').value.toLowerCase()
+
+  if(textoEscrito === " "){
+      return filtroCheckBox
+  } else{
+      return filtroCheckBox.filter( evento => evento.name.toLowerCase()
+        .includes(textoEscrito))
+  }
+}
+
+function NoCoincidenciaMensaje(){
+  mensaje = `<h1>Events not found, please try again!</h1>`
+   return mensaje
+}
+
+

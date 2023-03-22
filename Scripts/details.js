@@ -42,7 +42,7 @@ function crearCarta(elemento) {
 }
 
 function ponerCartas( objeto, element){
-    let template = ''
-    template += crearCarta(objeto)
-    element.innerHTML = template
+  let template = ''
+  template += crearCarta(objeto)
+  element.innerHTML = template
 } 
