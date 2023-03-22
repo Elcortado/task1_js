@@ -64,20 +64,18 @@
     </header>
     <main class="events">
       
-    <div id="checkbox-search"
-    class="container form-check  d-flex flex-column gap-4 align-items-center justify-content-center justify-content-lg">
-  
-    <div class="container d-flex flex-wrap gap-2 justify-content-center ps-4" id="chbox">
-    </div>
-    <form action="">
-      <fieldset class="d-flex justify-content-end">
-          <input class="form-control me-2" type="search" placeholder="Search" id="search" aria-label="Search">
-      </fieldset>
-  </form>
+    <div class="d-flex navbar justify-content-evenly h4 pb-2 mb-4 text-secondary border-bottom border-secondary strong">
+      <div id="inlineCheckbox">
+      </div>
+      <form class="d-flex" role="search" id="search-form">
+          <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search">
+      </form>
   </div>
-   <div class="container d-flex flex-wrap justify-content-center gap-3" id="cartas">
-  </div>
-    </main>
+  <div class="d-flex flex-column justify-content-center">
+      <div class="d-flex flex-wrap justify-content-evenly" id="cardEvents">
+      </div>
+  </div>    
+</main>
 
     <footer>
       <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
@@ -96,7 +94,8 @@
         <h4>Cohort</h4>
       </div>
     </footer>
-    <script type="module" src="./Scripts/index.js"></script>
+    <script src="./Scripts/index.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"

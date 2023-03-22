@@ -1,103 +1,87 @@
-const eventsCards = document.getElementById("cartas");
-const checkbox = document.getElementById("chbox");
-const $search = document.getElementById("search")
-const fragment = document.createDocumentFragment();
-
-async function getData() {
+async function fetchCards() {
     try {
-        let apiUrl = 'https://mindhub-xj03.onrender.com/api/amazing'
-        let response = await fetch(apiUrl);
-        data = await response.json();
-        createCategory(data)
-        Carta(data.events, eventsCards);
-        createChbox(Categories, checkbox);
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-getData()
-
-let data=""
-let Categories=""
-
-function Carta(array, container) {
-  container.innerHTML = ""
-  for (let card of array) {
-      let div = document.createElement("div")
-      div.className = "card col-10 col-sm-3"
-      div.innerHTML += `
-     <img src="${card.image}" class="fotos card-img-top" style="height:150px" alt="${card.name}">
-   <div class="card-body d-flex flex-column align-items-center text-center">
-       <h5 class="card-title">${card.name}</h5>
-       <p class="card-text">${card.description}</p>
-   </div>
-   <div class="card-footer d-flex flex-column align-items-center">
-       <small class="text-muted">Price $${card.price}</small>
-       <a href="./details.html" class="btn btn-outline-secondary">Details</a>
-   </div>
-</div>`
-      fragment.appendChild(div);
-  }
-  container.appendChild(fragment);
-}
-function filtrarEventosPorFecha(eventos, fecha) {
-  let fechaActual = new Date(fecha);
-  let eventosFiltrados = eventos.filter(evento => {
-    let fechaEvento = new Date(evento.date);
-    return fechaEvento > fechaActual;
-  })
-  return eventosFiltrados;
-};
-
-const createCategory = (array) => {
-    let categories = array.events.map(category => category.category)
-    Categories = categories.reduce((cosa, otraCosa) => {
-        if (!cosa.includes(otraCosa)) {
-            cosa.push(otraCosa);
+      let urlApi = 'https://mindhub-xj03.onrender.com/api/amazing';
+      let response = await fetch(urlApi).then(res => res.json());
+      let printEvents = (cardId, eventsArray) => {
+        let card = document.getElementById(cardId);
+        let cardsDelEvento = eventsArray
+          .filter(event => event.date > response.currentDate)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(event => `
+            <div class="card m-2 text-center" style="width:18rem" class="cardDetails">
+              <img src="${event.image}" class="fotos card-img-top" style="height:150px" alt="${event.name}">
+              <div class="card-body d-flex flex-column align-items-center text-center">
+                <h5 class="card-title">${event.name}</h5>
+                <p class="card-text">${event.description}</p>
+              </div>
+              <div class="card-footer d-flex flex-column align-items-center">
+                <small class="text-muted">${event.price}</small>
+                <a href="./details.html?id=${event.id}" class="btn btn-outline-secondary">Details</a>
+              </div>
+            </div>
+          `);
+        card.innerHTML = cardsDelEvento.join('');
+      };
+  
+      printEvents('cardEventsf', response.events);
+  
+      let categorias = [...new Set(response.events.map(evento => evento.category))];
+      categorias = categorias.sort();
+      let checkboxContainer = document.querySelector('#inlineCheckbox');
+  
+      let updateResults = async () => {
+        try {
+          let response = await fetch(urlApi).then(res => res.json());
+          let events = response.events.filter(event => event.date);
+          let checkedCategories = [...checkboxes].filter(checkbox => checkbox.checked).map(checkbox => checkbox.value.toLowerCase());
+          let searchTerm = searchInput.value.toLowerCase();
+          let filteredEvents = events.filter(event => {
+            return (
+              event.name.toLowerCase().includes(searchTerm) &&
+              (checkedCategories.length === 0 || checkedCategories.includes(event.category.toLowerCase())) && event.date > response.currentDate
+            );
+          });
+          if (filteredEvents.length > 0) {
+            printEvents('cardEventsf', filteredEvents);
+          } else {
+            swal("No results... Please try again",);
+            searchInput.value = '';
+            setTimeout(() => location.reload(), 2000);
+          }
+        } catch (error) {
+          console.error('Error al recuperar los datos', error);
         }
-        return cosa
-    }, [])
-    return Categories
-}
-
-const createChbox = (categories, checkbox) => {
-    categories.forEach(category => {
-        let div = document.createElement('div')
-        div.className = `form-check mt-3`
-        div.innerHTML = `
-        <input type="checkbox" id="${category}" name="categories" class="form-check-input" value="${category}">
-        <label for="${category}" class="form-check-label me-1">${category}</label>
-        `
-        checkbox.appendChild(div)
-    });
-}
-
-
-const FiltSearch = (array, value) => {
-    let filtrsearch = array.filter(buscador => buscador.name.toLowerCase().includes(value.toLowerCase().trim()))
-    return filtrsearch
-}
-
-const FiltCheck = (array,) => {
-    const checkedCategories = Array.from(checkbox.querySelectorAll('input[type="checkbox"]:checked')).map((el) => el.value);
-    if (checkedCategories.length === 0) {
-        return array;
-    } else {
-        let filtrado = array.filter(check => checkedCategories.includes(check.category));
-        return filtrado;
+      };
+  
+      categorias.forEach(categoria => {
+        let checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = categoria;
+        checkbox.value = categoria;
+        checkbox.classList.add('form-check-input');
+        checkbox.addEventListener('change', updateResults);
+  
+        let label = document.createElement('label');
+        label.htmlFor = categoria;
+        label.textContent = categoria;
+        label.classList.add('form-check-label', 'blockquote');
+  
+        let div = document.createElement('div');
+        div.classList.add('form-check', 'form-check-inline');
+        div.appendChild(checkbox);
+        div.appendChild(label);
+  
+        checkboxContainer.appendChild(div);
+      });
+  
+      let checkboxes = document.querySelectorAll('input[type=checkbox]');
+      let searchInput = document.querySelector('input[type=search]');
+  
+      checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateResults));
+      searchInput.addEventListener('input', updateResults);
+    } catch (error) {
+      console.error('Error al recuperar los datos:', error);
     }
-}
-
-
-
-$search.addEventListener('keyup', (e) =>{
-    let datereando = FiltSearch(data.events, e.target.value)
-    Carta(datereando, eventsCards)
-})
-
-
-checkbox.addEventListener('change', () => {
-    let nuevofiltrado = FiltCheck(data.events);
-    Carta(nuevofiltrado, eventsCards)
-})
+  }
+  
+  document.addEventListener('DOMContentLoaded', fetchCards);
