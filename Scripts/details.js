@@ -1,36 +1,26 @@
-const detailCard = document.querySelector('#detailCard');
-const queryString = location.search;
-const params = new URLSearchParams(queryString);
-const id= params.get("id");
-function detailsCard(event,place){
-    let card = '';
-    card += `
-    <div class="text-center card card-d d-flex justify-content-center mx-4 bg-section-1">
-    <div class="row align-items-center">
-        <div class="col-md-6">
-            <img src="${event.image}" alt="${event.name}" class="img-fluid rounded img-w">
-        </div>
-        <div class="col-md-6 py-4">
-            <h2 class="card-title">${event.name}</h2>
-            <h4 class="card-text">${event.description}</h4>
-            <h6 class="card-subtitle mb-2 text-muted">Placce: ${event.place}</h6>
-            </div>
-            </div>
-            </div>
-            `
+let $main = document.querySelector("main");
+let id = new URLSearchParams(document.location.search).get("id");
 
-    place.innerHTML = card;
+
+fetch('https://mindhub-xj03.onrender.com/api/amazing')
+    .then(respuesta => respuesta.json())
+    .then(datos => renderizarEventoDetallado(datos.events, id, $main))
+    .catch(e => console.log(e));
+
+function renderizarEventoDetallado(eventos, idEvento, idContenedor) {
+    let eventoObjetivo = eventos.find(evento => evento._id == idEvento);
+    
+    idContenedor.innerHTML += `<div class="container bg-dark p-0 d-flex flex-column gap-2 p-2 w-90 border border-5" id="contenedor-details">
+                                <img src=${eventoObjetivo.image} alt=${eventoObjetivo.name} title=${eventoObjetivo.name} width="100%">
+                                <div>
+                                    <h2 class="text-light text-center fs-1 pb-2"> ${eventoObjetivo.name}</h2>
+                                    <p class="text-light fs-4"> ${eventoObjetivo.description}</p>
+                                    <p class="text-light fs-4">Date: ${eventoObjetivo.date}</p>
+                                    <p class="text-light fs-4">Place: ${eventoObjetivo.place}</p>
+                                    <p class="text-light fs-4">Category: ${eventoObjetivo.category}</p>
+                                    <p class="text-light fs-4">Capacity: ${eventoObjetivo.capacity}</p>
+                                    <p class="text-light fs-4">Estimate: ${eventoObjetivo.assistance}</p>
+                                    <p class="text-light fs-4">Price: ${eventoObjetivo.price}$</p>
+                                </div>
+                            </div>`
 }
-
-
-let eventsFetched = '';
-async function getData(){
-    //fetch('./API.json')
-    await fetch('https://mindhub-xj03.onrender.com/api/amazing').then(response => response.json()).then(datosApi => {
-      eventsFetched = datosApi;
-      const detailEvent = eventsFetched.events.find(event => event._id === parseInt(id));
-      detailsCard(detailEvent,detailCard);
-    }).catch(error => console.log(error.message))
-    }
-
-getData();
