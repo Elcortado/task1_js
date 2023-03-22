@@ -1,43 +1,36 @@
-let eventos = data.events;
-let query = location.search 
-let params = new URLSearchParams(query) 
-let id_query = Number(params.get('_id')) 
+const detailCard = document.querySelector('#detailCard');
+const queryString = location.search;
+const params = new URLSearchParams(queryString);
+const id= params.get("id");
+function detailsCard(event,place){
+    let card = '';
+    card += `
+    <div class="text-center card card-d d-flex justify-content-center mx-4 bg-section-1">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <img src="${event.image}" alt="${event.name}" class="img-fluid rounded img-w">
+        </div>
+        <div class="col-md-6 py-4">
+            <h2 class="card-title">${event.name}</h2>
+            <h4 class="card-text">${event.description}</h4>
+            <h6 class="card-subtitle mb-2 text-muted">Placce: ${event.place}</h6>
+            </div>
+            </div>
+            </div>
+            `
 
-function defineDetails(detalle) { 
-  let cardQuantity = "";
-  if (detalle.assistance) { 
-    cardQuantity += "Assistance: " + detalle.assistance;
-  }
-  if (detalle.estimate) {
-    cardQuantity += (cardQuantity ? " || " : "") + "Estimate: " + detalle.estimate; 
-  }
-  let cardDetails = 
-      `<div class="col-md-12">
-      <img src="${detalle.image}" class="img-fluid rounded-start img-detail" alt="${detalle.name}">
-  </div>
-  <div class="col-md-12">
-      <div class="card-body">
-          <h5 class="card-title">${detalle.name}</h5>
-          <p class="card-text"><small class="text-muted">${detalle.date}</small></p>
-          <p class="card-text">${detalle.description}</p>
-          <p class="card-text">Price: $${detalle.price}</p>
-          <div class="d-flex justify-content-around">
-              <p class="card-text"><small class="text-muted">Category: ${detalle.category}</small></p>
-              <p class="card-text"><small class="text-muted">Place:  ${detalle.place}</small></p>
-              <p class="card-text"><small class="text-muted">Capacity: ${detalle.capacity}</small></p>
-              <p class="card-text"><small class="text-muted"> ${cardQuantity}</small></p>
-          </div>
-      </div>
-  </div>`;
-  
-  return cardDetails;
+    place.innerHTML = card;
 }
 
-function printDetalle(id,det,array_events) {
-  let container = document.querySelector(id); 
-  let dato = array_events.find(each => each._id === det);
-  let details = defineDetails(dato); 
-  container.innerHTML = details; 
-}
 
-printDetalle('#detail', id_query, eventos);
+let eventsFetched = '';
+async function getData(){
+    //fetch('./API.json')
+    await fetch('https://mindhub-xj03.onrender.com/api/amazing').then(response => response.json()).then(datosApi => {
+      eventsFetched = datosApi;
+      const detailEvent = eventsFetched.events.find(event => event._id === parseInt(id));
+      detailsCard(detailEvent,detailCard);
+    }).catch(error => console.log(error.message))
+    }
+
+getData();
