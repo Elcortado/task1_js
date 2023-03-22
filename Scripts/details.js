@@ -1,10 +1,10 @@
-let $main = document.querySelector("main");
+let $main = document.querySelector("#details");
 let id = new URLSearchParams(document.location.search).get("id");
 
 
 fetch('https://mindhub-xj03.onrender.com/api/amazing')
     .then(respuesta => respuesta.json())
-    .then(datos => renderizarEventoDetallado(datos.events, id, $main))
+    .then(datos => renderizarEventoDetallado(datos.events, id, $details))
     .catch(e => console.log(e));
 
 function renderizarEventoDetallado(eventos, idEvento, idContenedor) {
